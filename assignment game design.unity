@@ -517,7 +517,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 28ccc11cca42005419528d5e356bdf1e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 285886002}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2404926991738475417, guid: 28ccc11cca42005419528d5e356bdf1e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 687200406}
   m_SourcePrefab: {fileID: 100100000, guid: 28ccc11cca42005419528d5e356bdf1e, type: 3}
 --- !u!4 &241987008 stripped
 Transform:
@@ -1304,6 +1307,26 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ecf2c54ed34d8143803b727ce0b591a, type: 3}
+--- !u!1 &687200402 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2404926991738475417, guid: 28ccc11cca42005419528d5e356bdf1e, type: 3}
+  m_PrefabInstance: {fileID: 241987007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &687200406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687200402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0998bc1e8ccfc3f4a9e9d18bf6c81de3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorOpener
+  openKey: 111
+  openAngle: -90
+  speed: 2
 --- !u!1001 &750657171
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3835,6 +3858,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 32710603360613a4b8c76d8545744f61, type: 3}
       propertyPath: m_Name
       value: GROZA
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 32710603360613a4b8c76d8545744f61, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
