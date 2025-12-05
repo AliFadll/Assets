@@ -3,39 +3,45 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    [Header("Menu Canvases")]
     public GameObject startMenuCanvas;
     public GameObject pauseMenuCanvas;
+
+    [Header("Gameplay UI")]
+    public GameObject inventoryCanvas;
+    public GameObject healthCanvas;
 
     private bool isPaused = false;
 
     void Start()
     {
-        // Show start menu at the beginning
+        // Show start menu and freeze game
         startMenuCanvas.SetActive(true);
         pauseMenuCanvas.SetActive(false);
-        Time.timeScale = 0f; // Freeze game until Start is clicked
+        inventoryCanvas.SetActive(false);
+        healthCanvas.SetActive(false);
+        Time.timeScale = 0f;
     }
 
     void Update()
     {
-        // Toggle Pause Menu with P
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) && !startMenuCanvas.activeSelf)
         {
-            if (!isPaused)
-                PauseGame();
-            else
-                ResumeGame();
+            if (!isPaused) PauseGame();
+            else ResumeGame();
         }
     }
 
-    // Start Game Button
+    // Start Menu Button
     public void StartGame()
     {
         startMenuCanvas.SetActive(false);
-        Time.timeScale = 1f; // Start the game
+        inventoryCanvas.SetActive(true);
+        healthCanvas.SetActive(true);
+        Time.timeScale = 1f;
     }
 
-    // Pause
+    // Pause Menu Buttons
     public void PauseGame()
     {
         pauseMenuCanvas.SetActive(true);
@@ -43,7 +49,6 @@ public class MenuManager : MonoBehaviour
         isPaused = true;
     }
 
-    // Continue Button
     public void ResumeGame()
     {
         pauseMenuCanvas.SetActive(false);
@@ -51,24 +56,25 @@ public class MenuManager : MonoBehaviour
         isPaused = false;
     }
 
-    // Restart Game Button
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // Exit Game Button
     public void ExitGame()
     {
-        Debug.Log("Game Quit");
-        Application.Quit();
+#if UNITY_EDITOR
+        // Stop play mode in editor
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+            // Quit the game in build
+            Application.Quit();
+#endif
     }
 
-    // Controls Button (example)
     public void ShowControls()
     {
-        Debug.Log("Show Controls Panel");
-        // You can open another UI panel for controls here
+        Debug.Log("Controls Panel Opened");
     }
 }

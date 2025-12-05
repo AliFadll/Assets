@@ -39,16 +39,9 @@ public class DoorOpener : MonoBehaviour
         // Show/hide panel
         if (doorPanel != null)
         {
-            if (canOpen)
-            {
-                doorPanel.SetActive(true);
-                if (doorText != null)
-                    doorText.text = $"Press {openKey} to open/close the door";
-            }
-            else
-            {
-                doorPanel.SetActive(false);
-            }
+            doorPanel.SetActive(canOpen);
+            if (canOpen && doorText != null)
+                doorText.text = $"Press {openKey} to open/close the door";
         }
 
         // Open/close door
@@ -56,9 +49,12 @@ public class DoorOpener : MonoBehaviour
         {
             isOpen = !isOpen;
 
-            // OPTIONAL: trigger loading screen when door opens
             if (isOpen)
             {
+                // Update Level to 2 when door opens
+                if (LevelManager.Instance != null)
+                    LevelManager.Instance.SetLevel(2);
+
                 StartCoroutine(ShowLoadingAndMovePlayer());
             }
         }
@@ -69,7 +65,7 @@ public class DoorOpener : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("player")) // Ensure player tag is exactly "Player"
+        if (other.CompareTag("player"))
         {
             canOpen = true;
             player = other.transform;
@@ -93,15 +89,12 @@ public class DoorOpener : MonoBehaviour
         if (loadingPanel != null)
             loadingPanel.SetActive(true);
 
-        // Wait for the loading effect
         yield return new WaitForSeconds(loadingDuration);
 
-        // Move player outside the fence (assign a target position in inspector)
-        // Create an empty GameObject for target position and drag it to this script if needed
+        // Move player to next level spawn
         Transform targetPosition = GameObject.Find("NextLevelSpawn")?.transform;
         if (targetPosition != null && player != null)
         {
-            // If player uses CharacterController, disable before moving
             var cc = player.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 

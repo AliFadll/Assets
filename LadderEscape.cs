@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class LadderEscape : MonoBehaviour
 {
@@ -42,15 +43,13 @@ public class LadderEscape : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator EscapeSequence()
+    private IEnumerator EscapeSequence()
     {
         interactPanel.SetActive(false);
         loadingPanel.SetActive(true);
 
-        // Wait 1.5 seconds for loading effect
         yield return new WaitForSeconds(1.5f);
 
-        // Move player
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
 
@@ -59,5 +58,9 @@ public class LadderEscape : MonoBehaviour
         if (cc != null) cc.enabled = true;
 
         loadingPanel.SetActive(false);
+
+        // Update Level to 3 when ladder escape completes
+        if (LevelManager.Instance != null)
+            LevelManager.Instance.SetLevel(3);
     }
 }
