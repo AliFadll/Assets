@@ -1,36 +1,42 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class DoorOpener : MonoBehaviour
 {
     [Header("Door Settings")]
-    public KeyCode openKey = KeyCode.O;  // Key to open/close
-    public float openAngle = 90f;        // How far it rotates when opened
-    public float speed = 2f;             // Rotation speed
+    public KeyCode openKey = KeyCode.O;
+    public float openAngle = 90f;
+    public float speed = 2f;
     private bool isOpen = false;
     private Quaternion closedRotation;
     private Quaternion openRotation;
 
     [Header("UI (optional)")]
-    public GameObject doorPanel;         // Panel GameObject that contains doorText (assign in Inspector)
-    public TMP_Text doorText;            // TextMeshPro text inside panel (assign in Inspector)
+    public GameObject doorPanel;         // UI panel for "Press O to open"
+    public TMP_Text doorText;
+    public GameObject loadingPanel;      // UI panel for loading/transition
+    public float loadingDuration = 1.5f; // Duration to show loading screen
 
     // Internal
-    private bool canOpen = false;        // true when player is inside trigger area
+    private bool canOpen = false;        // true when player is inside trigger
+    private Transform player;            // reference to player transform
 
     void Start()
     {
         closedRotation = transform.rotation;
         openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
 
-        // Hide UI panel initially (if assigned)
         if (doorPanel != null)
             doorPanel.SetActive(false);
+
+        if (loadingPanel != null)
+            loadingPanel.SetActive(false);
     }
 
     void Update()
     {
-        // Show/hide panel based on player proximity
+        // Show/hide panel
         if (doorPanel != null)
         {
             if (canOpen)
@@ -45,30 +51,28 @@ public class DoorOpener : MonoBehaviour
             }
         }
 
-        // Keep your original open/close key handling intact
+        // Open/close door
         if (Input.GetKeyDown(openKey) && canOpen)
         {
-            isOpen = !isOpen; // toggle open/close only when player is near
+            isOpen = !isOpen;
+
+            // OPTIONAL: trigger loading screen when door opens
+            if (isOpen)
+            {
+                StartCoroutine(ShowLoadingAndMovePlayer());
+            }
         }
 
-        // Smooth rotation (unchanged)
-        if (isOpen)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, openRotation, Time.deltaTime * speed);
-        }
-        else
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, closedRotation, Time.deltaTime * speed);
-        }
+        // Smooth rotation
+        transform.rotation = Quaternion.Slerp(transform.rotation, isOpen ? openRotation : closedRotation, Time.deltaTime * speed);
     }
 
-    // Enter/Exit trigger for showing UI
     private void OnTriggerEnter(Collider other)
     {
-        // make sure your player GameObject has the "Player" tag
-        if (other.CompareTag("player"))
+        if (other.CompareTag("player")) // Ensure player tag is exactly "Player"
         {
             canOpen = true;
+            player = other.transform;
         }
     }
 
@@ -78,5 +82,35 @@ public class DoorOpener : MonoBehaviour
         {
             canOpen = false;
         }
+    }
+
+    // Coroutine to show loading screen and move player
+    private IEnumerator ShowLoadingAndMovePlayer()
+    {
+        if (doorPanel != null)
+            doorPanel.SetActive(false);
+
+        if (loadingPanel != null)
+            loadingPanel.SetActive(true);
+
+        // Wait for the loading effect
+        yield return new WaitForSeconds(loadingDuration);
+
+        // Move player outside the fence (assign a target position in inspector)
+        // Create an empty GameObject for target position and drag it to this script if needed
+        Transform targetPosition = GameObject.Find("NextLevelSpawn")?.transform;
+        if (targetPosition != null && player != null)
+        {
+            // If player uses CharacterController, disable before moving
+            var cc = player.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            player.position = targetPosition.position;
+
+            if (cc != null) cc.enabled = true;
+        }
+
+        if (loadingPanel != null)
+            loadingPanel.SetActive(false);
     }
 }
